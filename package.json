@@ -1,0 +1,19 @@
+{
+  "name": "tickets-root",
+  "private": true,
+  "workspaces": [
+    "ticket-web"
+  ],
+  "scripts": {
+    "dev": "npm --prefix ticket-web run dev"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "firebase": "^12.13.0",
+    "framer-motion": "^12.40.0",
+    "lucide-react": "^1.16.0",
+    "react-router-dom": "^7.15.1",
+    "swiper": "^12.1.4",
+    "tailwindcss": "^4.3.0"
+  }
+}

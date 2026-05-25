@@ -1,0 +1,38 @@
+export const events = [
+  {
+    id: 1,
+    title: "Afro Music Festival",
+    location: "Nairobi",
+    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+    price: 5000,
+    category: "music",
+    status: "live",
+  },
+  {
+    id: 2,
+    title: "Tech Meetup 2026",
+    location: "Westlands",
+    image: "https://images.unsplash.com/photo-1551818255-e6e10975bc17",
+    price: 1500,
+    category: "tech",
+    status: "live",
+  },
+  {
+    id: 3,
+    title: "Night Rave Experience",
+    location: "Kilimani",
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819",
+    price: 3000,
+    category: "night",
+    status: "live",
+  },
+  {
+    id: 4,
+    title: "Comedy Night Live",
+    location: "CBD Nairobi",
+    image: "https://images.unsplash.com/photo-1505236858219-8359eb29e329",
+    price: 2000,
+    category: "comedy",
+    status: "live",
+  },
+]

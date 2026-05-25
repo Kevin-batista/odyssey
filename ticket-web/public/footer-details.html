@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Odyssey - Information Center</title>
+  <style>
+    /* -------------------------------------------------------------
+       CORE DESIGN SYSTEM & RESET
+       ------------------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050816;
+      color: #94a3b8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* -------------------------------------------------------------
+       NEON AMBIENT BACKDROP GLOWS
+       ------------------------------------------------------------- */
+    .glow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .glow-orb-1 {
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(60px);
+    }
+
+    .glow-orb-2 {
+      position: absolute;
+      bottom: 10%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(50px);
+    }
+
+    /* -------------------------------------------------------------
+       APPLICATION HEADER CONTAINER
+       ------------------------------------------------------------- */
+    .header-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: rgba(5, 8, 22, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(to right, #fff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-marketplace-btn {
+      font-size: 0.8rem;
+      color: #a855f7;
+      text-decoration: none;
+      font-family: monospace;
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: rgba(168, 85, 247, 0.05);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .back-marketplace-btn:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    }
+
+    /* -------------------------------------------------------------
+       MAIN FLEXBOX ARCHITECTURE
+       ------------------------------------------------------------- */
+    .viewport-wrapper {
+      flex: 1;
+      display: flex;
+      max-width: 1400px;
+      width: 100%;
+      margin: 70px auto 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Left Navigation Dock */
+    .sidebar-dock {
+      width: 320px;
+      padding: 3rem 2rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.03);
+      position: fixed;
+      height: calc(100vh - 70px);
+      overflow-y: auto;
+    }
+
+    /* Right Documentation Content Window */
+    .content-window {
+      margin-left: 320px;
+      flex: 1;
+      padding: 3rem 4rem;
+      max-width: 900px;
+    }
+
+    /* -------------------------------------------------------------
+       SIDEBAR INTERACTION COMPONENTS
+       ------------------------------------------------------------- */
+    .nav-category {
+      margin-bottom: 2.25rem;
+    }
+
+    .category-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #f8fafc;
+      margin-bottom: 0.75rem;
+      opacity: 0.4;
+    }
+
+    .nav-menu-list {
+      list-style: none;
+    }
+
+    .nav-item {
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      text-decoration: none;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-link.active-tab {
+      color: #fff;
+      font-weight: 600;
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0) 100%);
+      border-left: 2px solid #a855f7;
+      padding-left: 0.7rem;
+    }
+
+    .external-arrow {
+      font-size: 0.7rem;
+      opacity: 0.3;
+      transition: opacity 0.15s ease;
+    }
+
+    .nav-link:hover .external-arrow,
+    .nav-link.active-tab .external-arrow {
+      opacity: 1;
+    }
+
+    /* -------------------------------------------------------------
+       DOCUMENTATION TYPOGRAPHY LAYOUT
+       ------------------------------------------------------------- */
+    .documentation-view {
+      display: none;
+    }
+
+    .documentation-view.active-view {
+      display: block;
+      animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .doc-header h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-meta {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #a855f7;
+      margin-bottom: 2rem;
+    }
+
+    .doc-body {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 2rem;
+    }
+
+    .doc-body p {
+      font-size: 0.925rem;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+      overflow-wrap: break-word;
+    }
+
+    .doc-body h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin: 2.5rem 0 1rem 0;
+    }
+
+    /* Grid layout variation cards for Browse options */
+    .cards-flex-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .data-metric-card {
+      flex: 1 1 calc(33.333% - 1rem);
+      min-width: 200px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .data-metric-card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .data-metric-card h4 {
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .data-metric-card p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 0;
+    }
+
+    /* -------------------------------------------------------------
+       NEW COMPONENT: SEARCH BOX INPUT SYSTEMS
+       ------------------------------------------------------------- */
+    .search-container {
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.75rem 1.2rem;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: #a855f7;
+      background: rgba(168, 85, 247, 0.05);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #64748b;
+    }
+
+    /* -------------------------------------------------------------
+       RESPONSIVE MEDIA INJECTIONS
+       ------------------------------------------------------------- */
+    @media (max-width: 968px) {
+      .viewport-wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar-dock {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 2rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .content-window {
+        margin-left: 0;
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="glow-container">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+  </div>
+
+  <!-- Main Sticky Nav -->
+  <header class="header-nav">
+    <a href="/" class="brand-logo">Odyssey</a>
+    <a href="/" class="back-marketplace-btn">← Marketplace</a>
+  </header>
+
+  <!-- Core Content Container Frame -->
+  <div class="viewport-wrapper">
+
+    <!-- Fixed Left Menu Navigation Dock -->
+    <aside class="sidebar-dock">
+
+      <!-- Category 1: Info -->
+      <div class="nav-category">
+        <div class="category-title">Info</div>
+        <ul class="nav-menu-list">
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('marketplace')"><span>Odyssey
+                Marketplace</span><span class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('refund')"><span>Refund Policy</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('shipping')"><span>Shipping
+                Policy</span><span class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('purchase')"><span>Purchase
+                Agreement</span><span class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('terms')"><span>Terms of Use</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('privacy')"><span>Privacy Policy</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('choices')"><span>Your Privacy
+                Choices</span><span class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('cookies')"><span>Cookie
+                Preferences</span><span class="external-arrow">→</span></button></li>
+        </ul>
+      </div>
+
+      <!-- Category 2: Odyssey Core -->
+      <div class="nav-category">
+        <div class="category-title">Odyssey</div>
+        <ul class="nav-menu-list">
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('about')"><span>About</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('careers')"><span>Careers</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('advertise')"><span>Advertise</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('products')"><span>Products</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('contact')"><span>Contact Us</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('feedback')"><span>Feedback</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('help')"><span>Help</span><span
+                class="external-arrow">→</span></button></li>
+        </ul>
+      </div>
+
+      <!-- Category 3: Browse Filters -->
+      <div class="nav-category">
+        <div class="category-title">Browse By</div>
+        <ul class="nav-menu-list">
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('cities')"><span>Cities</span><span
+                class="external-arrow">→</span></button></li>
+          <li class="nav-item"><button class="nav-link" onclick="switchTab('venues')"><span>Venues</span><span
+                class="external-arrow">→</span></button></li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- Deep Scroll Documentation Processing Window -->
+    <main class="content-window">
+
+      <!-- ================= INFO SECTIONS ================= -->
+      <div id="view-marketplace" class="documentation-view">
+        <div class="doc-header">
+          <h1>Odyssey Marketplace</h1>
+          <div class="doc-meta">SYS // CORE_MARKETPLACE</div>
+        </div>
+        <div class="doc-body">
+          <p>Welcome to the core ticketing allocation layer of Odyssey. Our platform provides a real-time decentralized
+            layer for accessing secondary and primary marketplace distributions for sports events, dynamic entertainment
+            drops, and music live frames.</p>
+          <h3>Platform Authenticity guarantee</h3>
+          <p>Every single transaction token generated inside our Firestore security system maps directly to an
+            authenticated admin database record. This makes gate authentication immediate and guarantees protection
+            against duplicate ticket configurations.</p>
+        </div>
+      </div>
+
+      <div id="view-refund" class="documentation-view">
+        <div class="doc-header">
+          <h1>Refund Policy</h1>
+          <div class="doc-meta">LEGAL // REFUND_TERMS</div>
+        </div>
+        <div class="doc-body">
+          <p>Ticket issuance through Odyssey acts as a final inventory reservation for event allocation frames. Our
+            parameters depend on the specific guidelines issued by our verified event promoters.</p>
+          <h3>Cancellations & Postponements</h3>
+          <p>If an event is permanently canceled by the organizer, automated refunds are issued instantly to the source
+            processing account within 5 to 7 business days. If an event is shifted or postponed, current digital
+            barcodes remain fully valid for the newly locked calendar timestamp.</p>
+        </div>
+      </div>
+
+      <div id="view-shipping" class="documentation-view">
+        <div class="doc-header">
+          <h1>Shipping & Fulfillment</h1>
+          <div class="doc-meta">SYS // DISTRIBUTION</div>
+        </div>
+        <div class="doc-body">
+          <p>Odyssey operates completely within an instantaneous digital distribution profile. We do not require
+            traditional logistic timelines or parcel tracking metrics.</p>
+          <h3>Instant Digital Delivery</h3>
+          <p>Upon transaction verification, secure PDF layouts and dynamic structural QR entries are instantaneously
+            pushed into your user booking account profile and dispatched directly to your designated email index.</p>
+        </div>
+      </div>
+
+      <div id="view-purchase" class="documentation-view">
+        <div class="doc-header">
+          <h1>Purchase Agreement</h1>
+          <div class="doc-meta">LEGAL // USER_AGREEMENT</div>
+        </div>
+        <div class="doc-body">
+          <p>By registering checkout state changes on our platform, you establish a binding transaction relationship
+            under the baseline parameters of the Odyssey ticketing core framework.</p>
+          <h3>Inventory Limits</h3>
+          <p>To block high-velocity automated bot scripts and illicit marketplace cornering, user limits apply to
+            maximum event ticket allocations. Any account utilizing artificial vectors to cross these thresholds will
+            face dynamic transaction termination.</p>
+        </div>
+      </div>
+
+      <div id="view-terms" class="documentation-view">
+        <div class="doc-header">
+          <h1>Terms of Use</h1>
+          <div class="doc-meta">LEGAL // PLATFORM_TERMS</div>
+        </div>
+        <div class="doc-body">
+          <p>This application dashboard is owned and operated directly under Odyssey protocols. Continuous access
+            implies consistent alignment with our system security profile guidelines.</p>
+          <h3>System Abuse Clauses</h3>
+          <p>Any reverse engineering of API query payloads, endpoint probing, or malicious overhead injection targeting
+            our backend server architectures will cause immediate global IP address blocks and permanent verification
+            restrictions.</p>
+        </div>
+      </div>
+
+      <div id="view-privacy" class="documentation-view">
+        <div class="doc-header">
+          <h1>Privacy Policy</h1>
+          <div class="doc-meta">DATA // PRIVACY_CORE</div>
+        </div>
+        <div class="doc-body">
+          <p>Your transaction profile safety is fundamental to our development lifecycle. We structure storage layouts
+            to minimize exposures and maintain complete encryption metrics.</p>
+          <h3>Information Architecture</h3>
+          <p>We process only basic identification maps—including name configurations, confirmation email strings, and
+            secure processing keys. Odyssey does not record, handle, or retain raw banking credit information on local
+            server databases.</p>
+        </div>
+      </div>
+
+      <div id="view-choices" class="documentation-view">
+        <div class="doc-header">
+          <h1>Your Privacy Choices</h1>
+          <div class="doc-meta">DATA // USER_CONTROL</div>
+        </div>
+        <div class="doc-body">
+          <p>We support clear ownership matrices for personal data telemetry. Users retain structural parameters to
+            edit, request, or purge tracking records accumulated via performance tracking indices.</p>
+          <h3>Data Erasure Requests</h3>
+          <p>You can dynamically choose to opt out of non-essential profile tracking variables or submit structural data
+            erasure executions directly to our support engineers to remove associated platform historical records.</p>
+        </div>
+      </div>
+
+      <div id="view-cookies" class="documentation-view">
+        <div class="doc-header">
+          <h1>Cookie Preferences</h1>
+          <div class="doc-meta">SYS // SESSION_CONFIG</div>
+        </div>
+        <div class="doc-body">
+          <p>Odyssey applies isolated cookie containers to retain user system states, cart inventories, and admin
+            authorization context rules safely across app reloads.</p>
+          <h3>Functional Storage Profile</h3>
+          <p>Essential layout data points remain active to enable functional interface rendering. You can adjust
+            browser-level configurations to intercept tracking data points without fracturing checkout capability
+            routines.</p>
+        </div>
+      </div>
+
+
+      <!-- ================= ODYSSEY SECTIONS ================= -->
+      <div id="view-about" class="documentation-view">
+        <div class="doc-header">
+          <h1>About Odyssey</h1>
+          <div class="doc-meta">CORP // VISION</div>
+        </div>
+        <div class="doc-body">
+          <p>Odyssey is a high-performance marketplace constructed explicitly to modernize the speed and accessibility
+            of ticket discovery and seat distribution systems.</p>
+          <h3>Technical Mission</h3>
+          <p>By building optimized client structures, fluid state synchronization loops, and rapid admin modification
+            frameworks, we remove friction from event management pipelines, keeping ticket distribution lightning fast
+            and accessible worldwide.</p>
+        </div>
+      </div>
+
+      <div id="view-careers" class="documentation-view">
+        <div class="doc-header">
+          <h1>Careers</h1>
+          <div class="doc-meta">CORP // TALENT</div>
+        </div>
+        <div class="doc-body">
+          <p>We are consistently scouting for driven software developers, systems designers, and market analysts eager
+            to build optimized transactional frameworks.</p>
+          <h3>Engineering Mindset</h3>
+          <p>Our operational style prioritizes execution, clean syntax delivery, and robust architecture. If you thrive
+            on solving high-traffic distribution scaling problems, discover our remote and onsite openings.</p>
+        </div>
+      </div>
+
+      <div id="view-advertise" class="documentation-view">
+        <div class="doc-header">
+          <h1>Advertise</h1>
+          <div class="doc-meta">CORP // PARTNERSHIPS</div>
+        </div>
+        <div class="doc-body">
+          <p>Maximize your event engagement by integrating visibility models directly across high-traffic zones of the
+            primary Odyssey marketplace viewports.</p>
+          <h3>Targeted Audiences</h3>
+          <p>Our promotional banners filter locations and event affinities cleanly, matching premium entertainment
+            providers directly with an active, highly targeted user base.</p>
+        </div>
+      </div>
+
+      <div id="view-products" class="documentation-view">
+        <div class="doc-header">
+          <h1>Products</h1>
+          <div class="doc-meta">CORP // SOLUTIONS</div>
+        </div>
+        <div class="doc-body">
+          <p>Odyssey structures an integrated suite of event utilities built for both everyday users and large-scale
+            promoters.</p>
+          <h3>Core Ecosystem Modules</h3>
+          <p>Our product landscape spans user-facing ticket booking cards, rapid checkout management containers,
+            localized admin analytical interfaces, and programmatic scanner validation configurations.</p>
+        </div>
+      </div>
+
+      <div id="view-contact" class="documentation-view">
+        <div class="doc-header">
+          <h1>Contact Us</h1>
+          <div class="doc-meta">CORP // CHANNELS</div>
+        </div>
+        <div class="doc-body">
+          <p>Our communication channels are continuously online to address system anomalies or transactional
+            distribution issues.</p>
+          <h3>Primary Support Links</h3>
+          <p>For instant engineering tracking, hit our support channels directly via operational links or submit rapid
+            inquiry tickets directly to <strong>support@odyssey.com</strong>.</p>
+        </div>
+      </div>
+
+      <div id="view-feedback" class="documentation-view">
+        <div class="doc-header">
+          <h1>Feedback Loop</h1>
+          <div class="doc-meta">CORP // OPTIMIZATION</div>
+        </div>
+        <div class="doc-body">
+          <p>We constantly refine our functional layouts based directly on performance feedback from our active trading
+            users and event organizers.</p>
+          <h3>Interface Insights</h3>
+          <p>If you have feature ideas, interface optimizations, or logic upgrade notes concerning checkout or sorting
+            pipelines, drop our core product design team a message directly.</p>
+        </div>
+      </div>
+
+      <div id="view-help" class="documentation-view">
+        <div class="doc-header">
+          <h1>Help & Support Center</h1>
+          <div class="doc-meta">CORP // DOCUMENTATION</div>
+        </div>
+        <div class="doc-body">
+          <p>Find instant resolutions for account authentications, cart updates, tracking errors, or payment
+            confirmations.</p>
+          <h3>Frequently Answered Tracks</h3>
+          <p>Discover extensive walkthrough collections detailing handling steps for processing unexpected network
+            timeout errors, administrative console logging protocols, and barcode retrievals.</p>
+        </div>
+      </div>
+
+
+      <!-- ================= BROWSE SECTIONS ================= -->
+      <div id="view-cities" class="documentation-view">
+        <div class="doc-header">
+          <h1>Browse By Cities</h1>
+          <div class="doc-meta">GEO // COVERAGE</div>
+        </div>
+        <div class="doc-body">
+          <p>Discover localized live entertainment networks across key urban focal points. Select your current region to
+            sort proximate distribution inventories.</p>
+          
+          <!-- New Search Container for Cities -->
+          <div class="search-container">
+            <input type="text" class="search-input" id="search-cities" placeholder="Search cities..." onkeyup="filterCards('view-cities', this.value)">
+          </div>
+
+          <div class="cards-flex-grid">
+            <div class="data-metric-card">
+              <h4>New York</h4>
+              <p>Main Hub // Active Listings</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>London</h4>
+              <p>Euro-Zone Distributions</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Tokyo</h4>
+              <p>Asian Circuit Drops</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Paris</h4>
+              <p>Continental Entertainment Rings</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Sydney</h4>
+              <p>Oceania Region Feeds</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-venues" class="documentation-view">
+        <div class="doc-header">
+          <h1>Browse By Venues</h1>
+          <div class="doc-meta">GEO // ARENAS</div>
+        </div>
+        <div class="doc-body">
+          <p>Map out events based on specific partner destinations, local performance clubs, and stadium frameworks.</p>
+          
+          <!-- New Search Container for Venues -->
+          <div class="search-container">
+            <input type="text" class="search-input" id="search-venues" placeholder="Search venues..." onkeyup="filterCards('view-venues', this.value)">
+          </div>
+
+          <div class="cards-flex-grid">
+            <div class="data-metric-card">
+              <h4>The Grand Arena</h4>
+              <p>Capacity: 20,000 // Verified Tracker</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Central Stadium Outposts</h4>
+              <p>Capacity: 60,000 // Mass Events</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Cyberpunk Alley Space</h4>
+              <p>Capacity: 1,500 // Indie Drops</p>
+            </div>
+            <div class="data-metric-card">
+              <h4>Horizon Pavilion Grounds</h4>
+              <p>Capacity: 12,000 // Concert Baselines</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- -------------------------------------------------------------
+       INTERACTIVE ROUTING LOGIC ENGINE
+       ------------------------------------------------------------- -->
+  <script>
+    function switchTab(tabKey) {
+      // 1. Deactivate all views
+      const views = document.querySelectorAll('.documentation-view');
+      views.forEach(view => view.classList.remove('active-view'));
+
+      // 2. Remove styling from all menu tabs
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(link => link.classList.remove('active-tab'));
+
+      // 3. Locate target view identity
+      const targetView = document.getElementById(`view-${tabKey}`);
+      if (targetView) {
+        targetView.classList.add('active-view');
+      }
+
+      // 4. Style selected trigger link button
+      const triggerBtn = document.querySelector(`button[onclick="switchTab('${tabKey}')"]`);
+      if (triggerBtn) {
+        triggerBtn.classList.add('active-tab');
+      }
+
+      // 5. Update browser path state smoothly without page reloads
+      history.pushState(null, null, `/footer-details.html?page=${tabKey}`);
+      window.scrollTo(0, 0);
+    }
+
+    // Initialize content based on incoming URL query profiles on reload
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      let targetPage = urlParams.get('page') || 'marketplace';
+
+      // Fallback path parser if query fields are stripped away
+      const currentUrlPath = window.location.pathname;
+      if (currentUrlPath.includes('privacy-policy')) targetPage = 'privacy';
+      else if (currentUrlPath.includes('terms-of-use')) targetPage = 'terms';
+      else if (currentUrlPath.includes('refund-policy')) targetPage = 'refund';
+      else if (currentUrlPath.includes('cities')) targetPage = 'cities';
+      else if (currentUrlPath.includes('venues')) targetPage = 'venues';
+
+      switchTab(targetPage);
+    });
+
+    // Real-time card filtration engine
+    function filterCards(viewId, query) {
+      const parentView = document.getElementById(viewId);
+      if (!parentView) return;
+      
+      const cleanQuery = query.toLowerCase().trim();
+      const cards = parentView.querySelectorAll('.data-metric-card');
+      
+      cards.forEach(card => {
+        const titleText = card.querySelector('h4').textContent.toLowerCase();
+        const bodyText = card.querySelector('p').textContent.toLowerCase();
+        
+        if (titleText.includes(cleanQuery) || bodyText.includes(cleanQuery)) {
+          card.style.display = ""; // Shows card item matches
+        } else {
+          card.style.display = "none"; // Hides mismatches smoothly
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
