@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <title>Odyssey</title>
     <script>
-      const path = window.location.pathname;
-      const search = window.location.search;
-      const hash = window.location.hash;
-      const redirect = '/?p=' + encodeURIComponent(path + search) + (hash ? '&h=' + encodeURIComponent(hash) : '');
-      window.location.replace(redirect);
+      (function() {
+        const path = window.location.pathname;
+        const search = window.location.search;
+        const hash = window.location.hash;
+        const redirect = '/odyssey/?p=' + encodeURIComponent(path + search) + (hash ? '&h=' + encodeURIComponent(hash) : '');
+        window.location.replace(redirect);
+      })();
     </script>
   </head>
   <body></body>
