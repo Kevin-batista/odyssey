@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { Menu, X, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
+const BASE = "/odyssey"
+
 function Navbar() {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState("home")
@@ -13,8 +15,8 @@ function Navbar() {
   const sections = ["home", "featured", "events", "about", "contact"]
 
   const isAdminRoute =
-    window.location.pathname === "/admin" ||
-    window.location.pathname === "/admin-login"
+    window.location.pathname === `${BASE}/admin` ||
+    window.location.pathname === `${BASE}/admin-login`
 
   const scrollToSection = (id) => {
     const section = document.getElementById(id)
@@ -91,7 +93,7 @@ function Navbar() {
     }`
 
   const routeToAdminPortal = () => {
-    window.location.href = "/admin-login"
+    window.location.href = `${BASE}/admin-login`
   }
 
   const handleLogoClick = () => {

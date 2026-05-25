@@ -4,6 +4,8 @@ import { Eye, EyeOff, Lock, Mail, ArrowLeft, KeyRound, ShieldAlert } from "lucid
 import { collection, query, where, getDocs } from "firebase/firestore"
 import { db } from "../firebase" // Ensure this matches your Firebase config path
 
+const BASE = "/odyssey"
+
 function AdminLoginPortal({ onSuccess }) {
   // View states: 'login' | 'forgot' | 'reset-sent'
   const [view, setView] = useState("login")
@@ -51,7 +53,7 @@ function AdminLoginPortal({ onSuccess }) {
         localStorage.setItem("adminName", adminData.name || "System Administrator")
         
         if (onSuccess) onSuccess()
-        window.location.href = "/admin" // Forwarding to core Control Panel
+        window.location.href = `${BASE}/admin` // ✅ FIXED: was "/admin"
       } else {
         setError("Invalid administrative credentials or unauthorized profile.")
       }

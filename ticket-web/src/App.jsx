@@ -8,12 +8,14 @@ import Cart from "./components/Cart"
 import AdminPanel from "./components/AdminPanel"
 import AdminLoginPortal from "./components/AdminLoginPortal"
 import Footer from "./components/Footer"
-import FooterContentPage from "./components/FooterContentPage" 
+import FooterContentPage from "./components/FooterContentPage"
+
+const BASE = "/odyssey"
 
 function App() {
   const currentPath = window.location.pathname
-  const isAdminRoute = currentPath === "/admin"
-  const isAdminLoginRoute = currentPath === "/admin-login"
+  const isAdminRoute = currentPath === `${BASE}/admin`
+  const isAdminLoginRoute = currentPath === `${BASE}/admin-login`
   const isAdmin = localStorage.getItem("isAdmin") === "true"
 
   if (isAdminRoute) {
@@ -22,9 +24,8 @@ function App() {
         {isAdmin ? (
           <AdminPanel />
         ) : (
-          <div className="min-h-screen flex items-center justify-center bg-[#050816]">
-            {setTimeout(() => { window.location.href = "/admin-login" }, 0)}
-          </div>
+          // ✅ FIXED: setTimeout inside JSX return is wrong — use proper redirect
+          <RedirectTo path={`${BASE}/admin-login`} />
         )}
       </div>
     )
@@ -38,7 +39,7 @@ function App() {
     )
   }
 
-  if (currentPath === "/privacy-policy") {
+  if (currentPath === `${BASE}/privacy-policy`) {
     return (
       <FooterContentPage title="Privacy Policy">
         <p className="text-white font-medium">Last Updated: May 2026</p>
@@ -49,7 +50,7 @@ function App() {
     )
   }
 
-  if (currentPath === "/terms-of-use") {
+  if (currentPath === `${BASE}/terms-of-use`) {
     return (
       <FooterContentPage title="Terms of Use">
         <p>Welcome to Odyssey. By accessing our platform or purchasing tickets, you agree to comply directly with our operational protocols and ticketing integrity guidelines.</p>
@@ -59,7 +60,7 @@ function App() {
     )
   }
 
-  if (currentPath === "/refund-policy") {
+  if (currentPath === `${BASE}/refund-policy`) {
     return (
       <FooterContentPage title="Refund & Ticket Policy">
         <p>Our ticketing policies are strictly dependent on organizer parameters. If an event is permanently cancelled, refunds are initiated automatically back to the original funding option within 5-7 working days.</p>
@@ -80,7 +81,7 @@ function App() {
         <Cart />
 
         <section id="contact" className="py-20 px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Let’s Connect & Book</h2>
+          <h2 className="text-3xl font-bold mb-4">Let's Connect & Book</h2>
           <p className="text-gray-400 max-w-md mx-auto mb-10">
             Reach us instantly or follow us for updates, events, and exclusive drops.
           </p>
@@ -125,6 +126,12 @@ function App() {
       <Footer />
     </div>
   )
+}
+
+// ✅ Clean redirect component — replaces the broken setTimeout-in-JSX pattern
+function RedirectTo({ path }) {
+  window.location.replace(path)
+  return null
 }
 
 export default App
