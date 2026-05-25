@@ -5,7 +5,8 @@
     "ticket-web"
   ],
   "scripts": {
-    "dev": "npm --prefix ticket-web run dev"
+    "dev": "npm --prefix ticket-web run dev",
+    "build": "npm --prefix ticket-web run build"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",
@@ -15,5 +16,8 @@
     "react-router-dom": "^7.15.1",
     "swiper": "^12.1.4",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
